@@ -6,6 +6,7 @@
 #include <mcp_can.h>
 
 int stringSplit(char *str, const char *delim, int data[]);
+bool gotdata;
 
 //Might be bad form, but the final buffer lives here globally
 static unsigned char finalbuffer[8]={0,0,0,0,0,0,0,0};
@@ -49,6 +50,7 @@ void loop()
 {
   
     // check for received message
+    gotdata = false;
     unsigned char len = 0;
     unsigned char buf[8]={0};
     char capturetext[16]={0};
@@ -70,7 +72,8 @@ void loop()
               capturetext[0]=0;;
               sprintf(capturetext, "%02X", buf[i]);
               //Serial.print(capturetext);
-              capbuffera[i] = strtoul(capturetext, NULL, 16);  
+              capbuffera[i] = strtoul(capturetext, NULL, 16);
+              gotdata = true;  
             }
         
                   
@@ -81,7 +84,8 @@ void loop()
               capturetext[0]=0;;
               sprintf(capturetext, "%02X", buf[i]);
               //Serial.print(capturetext);
-              capbufferb[i] = strtoul(capturetext, NULL, 16);  
+              capbufferb[i] = strtoul(capturetext, NULL, 16);
+              gotdata = true;  
             }    
          }
         //Convert 1F9 Tach Message to 23D Tach Message
@@ -97,9 +101,18 @@ void loop()
         }
         Serial.println();
     }
-    CAN.sendMsgBuf(0x23D, 0, 0, 8, finalbuffer);
-    //Coolant Fan Controll
-    fancheck(capbufferb[0]); 
+    if (gotdata ==  true){
+      // Some sort of internal counter used by the Z33 dash.
+      if (finalbuffer[0] >= 60){
+        finalbuffer[0] = 0;
+      }
+      else {
+        finalbuffer[0] = finalbuffer[0] + 20;
+      }
+      CAN.sendMsgBuf(0x23D, 0, 0, 8, finalbuffer);
+      //Coolant Fan Controll
+      fancheck(capbufferb[0]);
+      } 
 }
 
 
