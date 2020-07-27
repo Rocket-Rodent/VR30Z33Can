@@ -15,6 +15,7 @@ unsigned int mastertime = 0;
 
 // the cs pin of the version after v1.1 is default to D9
 // v0.9b and v1.0 is default D10
+// the MKR Zero shield uses pin 3.
 const int SPI_CS_PIN = 3;
 
 
