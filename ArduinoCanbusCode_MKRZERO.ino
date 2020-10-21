@@ -15,17 +15,16 @@ unsigned int mastertime = 0;
 
 // the cs pin of the version after v1.1 is default to D9
 // v0.9b and v1.0 is default D10
-// the MKR Zero shield uses pin 3.
 const int SPI_CS_PIN = 3;
 
 
 MCP_CAN CAN(SPI_CS_PIN);                                    // Set CS pin
 void setup()
 {
-    while(!Serial);
-    delay(500);
+    //while(!Serial);
+    //delay(500);
     Serial.begin(115200);
-    delay(500);
+    //delay(500);
     CanbusStart();
 }
 
